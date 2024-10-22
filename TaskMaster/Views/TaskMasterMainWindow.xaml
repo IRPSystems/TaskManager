@@ -15,6 +15,10 @@
             <RowDefinition Height="30" />
         </Grid.RowDefinitions>
 
+        <Grid>
+            <local:TasksListView DataContext="{Binding TasksListVM}"/>
+        </Grid>
+
         <Border Grid.Row="4" Background="{DynamicResource MahApps.Brushes.Accent}">
             <StackPanel Orientation="Horizontal">
 
