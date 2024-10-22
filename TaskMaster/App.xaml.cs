@@ -1,4 +1,5 @@
-﻿using ControlzEx.Theming;
+﻿using Controls.Views;
+using ControlzEx.Theming;
 using System.Configuration;
 using System.Data;
 using System.Windows;
@@ -27,7 +28,7 @@ namespace TaskMaster
 			base.OnStartup(e);
 
 			SplashView splash = new SplashView();
-			splash.AppName = "EVVA";
+			splash.AppName = "Task Master";
 			splash.Show();
 
 			// Right now I'm showing main window right after splash screen but I will eventually wait until splash screen closes.
