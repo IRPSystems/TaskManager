@@ -1,0 +1,40 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:converters="clr-namespace:TaskMaster.Converters">
+
+    <converters:RemoveBreakLineFromNameConverter x:Key="RemoveBreakLineFromNameConverter" />
+
+    <DataTemplate x:Key="TaskTamplate">
+        
+        <Border BorderThickness="2" 
+                BorderBrush="{Binding Converter={StaticResource RemoveBreakLineFromNameConverter}}">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="27" />
+                    <RowDefinition Height="5" />
+                    <RowDefinition Height="27" />
+                    <RowDefinition Height="5" />
+                    <RowDefinition Height="27" />
+                </Grid.RowDefinitions>
+
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="100" />
+                    <ColumnDefinition Width="5" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Row="0" Grid.Column="0" Text="Type" />
+                <TextBlock Grid.Row="0" Grid.Column="2" Text="{Binding TaskType}" FontWeight="DemiBold" />
+
+                <TextBlock Grid.Row="2" Grid.Column="0" Text="Name" />
+                <TextBox Grid.Row="2" Grid.Column="2" Text="{Binding Name}" />
+
+                <TextBlock Grid.Row="2" Grid.Column="0" Text="Description" />
+                <TextBox Grid.Row="2" Grid.Column="2" Text="{Binding Description}" />
+                
+            </Grid>
+        </Border>
+
+    </DataTemplate>
+    
+</ResourceDictionary>

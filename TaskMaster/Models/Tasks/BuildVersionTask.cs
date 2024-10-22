@@ -1,7 +1,7 @@
 ﻿
 namespace TaskMaster.Models.Tasks
 {
-	public class BuildVersion : TaskBase
+	public class BuildVersionTask : TaskBase
 	{
 	}
 }
