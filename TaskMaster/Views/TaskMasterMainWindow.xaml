@@ -16,7 +16,13 @@
         </Grid.RowDefinitions>
 
         <Grid>
-            <local:TasksListView DataContext="{Binding TasksListVM}"/>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="300" />
+                <ColumnDefinition Width="10" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            
+            <local:TaskTypesListView Grid.Column="0" DataContext="{Binding TasksListVM}"/>
         </Grid>
 
         <Border Grid.Row="4" Background="{DynamicResource MahApps.Brushes.Accent}">

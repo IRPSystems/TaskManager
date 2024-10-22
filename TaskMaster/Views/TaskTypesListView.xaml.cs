@@ -16,11 +16,11 @@ using System.Windows.Shapes;
 namespace TaskMaster.Views
 {
 	/// <summary>
-	/// Interaction logic for TasksListView.xaml
+	/// Interaction logic for TaskTypesListView.xaml
 	/// </summary>
-	public partial class TasksListView : UserControl
+	public partial class TaskTypesListView : UserControl
 	{
-		public TasksListView()
+		public TaskTypesListView()
 		{
 			InitializeComponent();
 		}

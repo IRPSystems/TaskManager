@@ -12,7 +12,7 @@ using Entities.Models;
 
 namespace TaskMaster.ViewsModels
 {
-	public class TasksListViewModel : ObservableObject
+	public class TaskTypesListViewModel : ObservableObject
 	{
 		#region Properties
 
@@ -28,7 +28,7 @@ namespace TaskMaster.ViewsModels
 
 		#region Constructor
 
-		public TasksListViewModel(
+		public TaskTypesListViewModel(
 			DragDropData designDragDropData)
 		{
 			_designDragDropData = designDragDropData;

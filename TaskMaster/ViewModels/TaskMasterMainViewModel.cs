@@ -10,13 +10,13 @@ namespace TaskMaster.ViewModels
 	{
 		public string Version { get; set; }
 
-		public TasksListViewModel TasksListVM { get; set; }
+		public TaskTypesListViewModel TasksListVM { get; set; }
 
 		public TaskMasterMainViewModel() 
 		{
 			Version = Assembly.GetExecutingAssembly().GetName().Version.ToString();
 
-			TasksListVM = new TasksListViewModel(new DragDropData());
+			TasksListVM = new TaskTypesListViewModel(new DragDropData());
 		}
 	}
 }
