@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using MahApps.Metro.Controls;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -16,7 +17,7 @@ namespace TaskMaster.Views
 	/// <summary>
 	/// Interaction logic for TaskMasterMainWindow.xaml
 	/// </summary>
-	public partial class TaskMasterMainWindow : Window
+	public partial class TaskMasterMainWindow : MetroWindow
 	{
 		public TaskMasterMainWindow()
 		{
