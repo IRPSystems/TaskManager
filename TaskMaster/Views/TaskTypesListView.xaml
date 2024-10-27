@@ -7,20 +7,15 @@
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
              xmlns:local="clr-namespace:TaskMaster.Views"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800" MinWidth="200">
+             d:DesignHeight="450" d:DesignWidth="800" MinWidth="250">
     
     <Grid Grid.Column="0">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="0"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
 
-        <controls:HeaderView Grid.Row="0" Title="Task Types" FontSize="20" HeaderBackground="{DynamicResource MahApps.Brushes.Accent2}"/>
-
-        <ListView Grid.Row="1" ItemsSource="{Binding TaskList}"
-                          Background="Transparent"
-                          BorderBrush="{DynamicResource MahApps.Brushes.Accent2}"
-                          BorderThickness="1">
+        
+        <ListView ItemsSource="{Binding TaskList}"
+                  Background="Transparent"
+                  BorderBrush="{DynamicResource MahApps.Brushes.Accent2}"
+                  BorderThickness="1">
 
             <i:Interaction.Triggers>
 
@@ -63,7 +58,7 @@
 
             <ListView.ItemTemplate>
                 <DataTemplate>
-                    <TextBlock Text="{Binding TaskTypeName}" FontSize="18" Margin="0,5"/>
+                    <TextBlock Text="{Binding TaskTypeName}" FontSize="18" Margin="0,3"/>
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>

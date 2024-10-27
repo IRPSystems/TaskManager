@@ -120,7 +120,7 @@ namespace TaskMaster.ViewsModels
 				Math.Abs(diff.X) > SystemParameters.MinimumHorizontalDragDistance ||
 				Math.Abs(diff.Y) > SystemParameters.MinimumVerticalDragDistance)
 			{
-				string formate = "Task";
+				string formate = "TaskTypeToList";
 				
 
 				// Get the dragged ListViewItem

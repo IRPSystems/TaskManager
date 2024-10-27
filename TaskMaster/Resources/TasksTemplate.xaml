@@ -6,9 +6,26 @@
 
     <DataTemplate x:Key="TaskTamplate">
         
-        <Border BorderThickness="2" 
-                BorderBrush="{Binding Converter={StaticResource RemoveBreakLineFromNameConverter}}">
-            <Grid>
+        <Border BorderBrush="{Binding Converter={StaticResource RemoveBreakLineFromNameConverter}}"
+                Margin="5">
+
+            <Border.Resources>
+                <Style TargetType="Border">
+                    <Style.Triggers>
+
+                        <DataTrigger Binding="{Binding IsSelected}" Value="True">
+                            <Setter Property="BorderThickness" Value="5"/>
+                        </DataTrigger>
+
+                        <DataTrigger Binding="{Binding IsSelected}" Value="False">
+                            <Setter Property="BorderThickness" Value="2"/>
+                        </DataTrigger>
+
+                    </Style.Triggers>
+                </Style>
+            </Border.Resources>
+            
+            <Grid Margin="10">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="27" />
                     <RowDefinition Height="5" />
@@ -23,14 +40,13 @@
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
 
-                <TextBlock Grid.Row="0" Grid.Column="0" Text="Type" />
-                <TextBlock Grid.Row="0" Grid.Column="2" Text="{Binding TaskType}" FontWeight="DemiBold" />
+                <TextBlock Grid.Row="0" Grid.Column="2" Text="{Binding TaskTypeName}" FontWeight="DemiBold" />
 
                 <TextBlock Grid.Row="2" Grid.Column="0" Text="Name" />
                 <TextBox Grid.Row="2" Grid.Column="2" Text="{Binding Name}" />
 
-                <TextBlock Grid.Row="2" Grid.Column="0" Text="Description" />
-                <TextBox Grid.Row="2" Grid.Column="2" Text="{Binding Description}" />
+                <TextBlock Grid.Row="4" Grid.Column="0" Text="Description" />
+                <TextBox Grid.Row="4" Grid.Column="2" Text="{Binding Description}" />
                 
             </Grid>
         </Border>

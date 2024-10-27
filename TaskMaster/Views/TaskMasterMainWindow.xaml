@@ -7,7 +7,7 @@
                  xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
                  xmlns:local="clr-namespace:TaskMaster.Views"
                  mc:Ignorable="d"
-                 Title="Task Master" Height="450" Width="800">
+                 Title="Task Master" Height="800" Width="800">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
@@ -21,8 +21,9 @@
                 <ColumnDefinition Width="10" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
-            
-            <local:TaskTypesListView Grid.Column="0" DataContext="{Binding TasksListVM}"/>
+
+            <local:TaskTypesListView Grid.Column="0" DataContext="{Binding TaskTypesListVM}"/>
+            <local:TasksListView  Grid.Column="2" DataContext="{Binding TasksListVM}"/>
         </Grid>
 
         <Border Grid.Row="4" Background="{DynamicResource MahApps.Brushes.Accent}">
