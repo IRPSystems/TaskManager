@@ -1,9 +1,13 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Microsoft.Win32;
 using Newtonsoft.Json;
+using ScriptHandler.Views;
 using Services.Services;
 using System.Collections;
 using System.Collections.ObjectModel;
+using System.IO;
+using System.Security.AccessControl;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -16,11 +20,11 @@ namespace TaskMaster.ViewModels
 	{
 		#region Properties
 
-		public ObservableCollection<TaskBase> TasksList { get; set; }
+		public TasksListData TasksList { get; set; }
 
 
 		private bool _isChanged;
-		public bool IsChanged 
+		public bool IsChanged
 		{
 			get => _isChanged;
 			set
@@ -33,7 +37,7 @@ namespace TaskMaster.ViewModels
 		}
 
 
-#endregion Properties
+		#endregion Properties
 
 		#region Fields
 
@@ -53,8 +57,10 @@ namespace TaskMaster.ViewModels
 
 		public TasksListViewModel()
 		{
-
-			TasksList = new ObservableCollection<TaskBase>();
+			TasksList = new TasksListData()
+			{
+				TasksList = new ObservableCollection<TaskBase>()
+			};
 
 			MoveTaskUpCommand = new RelayCommand(MoveTaskUp);
 			MoveTaskDownCommand = new RelayCommand(MoveTaskDown);
@@ -67,7 +73,10 @@ namespace TaskMaster.ViewModels
 
 			CopyCommand = new RelayCommand(Copy);
 			PastCommand = new RelayCommand(Past);
-			//SaveCommand = new RelayCommand(Save);
+
+			//NewCommand = new RelayCommand(New);
+			SaveCommand = new RelayCommand(Save);
+			LoadCommand = new RelayCommand(Load);
 
 
 			_isMouseDown = false;
@@ -76,7 +85,7 @@ namespace TaskMaster.ViewModels
 			//_moveTaskService = new MoveTaskService();
 
 
-			
+
 			LoggerService.Inforamtion(this, "Finished init of Design");
 
 			IsChanged = false;
@@ -91,17 +100,17 @@ namespace TaskMaster.ViewModels
 		{
 			IsChanged = false;
 
-			
+
 		}
 
 		#region Expand/Collapse
-			
+
 
 		private void ScriptExpandAll()
 		{
 			LoggerService.Inforamtion(this, "Expanding all the tasks");
 
-			foreach (TaskBase taskBase in TasksList)
+			foreach (TaskBase taskBase in TasksList.TasksList)
 				taskBase.IsExpanded = true;
 		}
 
@@ -109,7 +118,7 @@ namespace TaskMaster.ViewModels
 		{
 			LoggerService.Inforamtion(this, "Collapsing all the tasks");
 
-			foreach (TaskBase taskBase in TasksList)
+			foreach (TaskBase taskBase in TasksList.TasksList)
 				taskBase.IsExpanded = false;
 		}
 
@@ -152,7 +161,7 @@ namespace TaskMaster.ViewModels
 			if (_isMouseDown == false)
 				return;
 
-			
+
 			LoggerService.Inforamtion(this, "Object is draged");
 
 			Point mousePos = e.GetPosition(null);
@@ -185,20 +194,20 @@ namespace TaskMaster.ViewModels
 					DataObject dragData = new DataObject(formate, listView.SelectedItems);
 					DragDrop.DoDragDrop(listView, dragData, DragDropEffects.Move);
 				}
-				
 
 
-				
+
+
 			}
 		}
 
 		private void TaskList_DragOver(DragEventArgs e)
 		{
-			if(!(e.Source is ListView li))
+			if (!(e.Source is ListView li))
 				return;
 			//ListBox li = sender as ListBox;
 			ScrollViewer sv = FindChildService.FindChild<ScrollViewer>(li);
-			if (sv == null) 
+			if (sv == null)
 				return;
 
 			double tolerance = 10;
@@ -240,7 +249,7 @@ namespace TaskMaster.ViewModels
 				IsChanged = true;
 
 			}
-			catch(Exception ex) 
+			catch (Exception ex)
 			{
 				LoggerService.Error(this, "Failed to drop", "Design Error", ex);
 			}
@@ -249,10 +258,10 @@ namespace TaskMaster.ViewModels
 
 		private void DropOfParameter(DragEventArgs e)
 		{
-			
+
 		}
 
-		
+
 		private void GetDroppedAndDroppedOn(
 			DragEventArgs e,
 			out TaskBase dropped,
@@ -275,7 +284,7 @@ namespace TaskMaster.ViewModels
 			{
 				dropped = e.Data.GetData("ChangeTaskPlace") as TaskBase;
 			}
-			
+
 
 			ListViewItem listViewItem =
 				FindAncestorService.FindAncestor<ListViewItem>((DependencyObject)e.OriginalSource);
@@ -312,12 +321,12 @@ namespace TaskMaster.ViewModels
 
 				foreach (TaskBase task in list)
 				{
-					int index = TasksList.IndexOf(task);
+					int index = TasksList.TasksList.IndexOf(task);
 					if (index <= 0)
 						return;
 
-					TasksList.Remove(task);
-					TasksList.Insert(index - 1, task);
+					TasksList.TasksList.Remove(task);
+					TasksList.TasksList.Insert(index - 1, task);
 				}
 
 				IsChanged = true;
@@ -334,7 +343,7 @@ namespace TaskMaster.ViewModels
 
 			try
 			{
-				
+
 				if (_selectedItems == null || _selectedItems.Count == 0)
 					return;
 
@@ -346,17 +355,17 @@ namespace TaskMaster.ViewModels
 
 				foreach (TaskBase task in list)
 				{
-					int index = TasksList.IndexOf(task);
-					if (index < 0 || index >= (TasksList.Count - 1))
+					int index = TasksList.TasksList.IndexOf(task);
+					if (index < 0 || index >= (TasksList.TasksList.Count - 1))
 						return;
 
-					TasksList.Remove(task);
-					TasksList.Insert(index + 1, task);
+					TasksList.TasksList.Remove(task);
+					TasksList.TasksList.Insert(index + 1, task);
 				}
 
 				IsChanged = true;
 			}
-			catch(Exception ex) 
+			catch (Exception ex)
 			{
 				LoggerService.Error(this, "Failed to move task down", "Up/Down Error", ex);
 			}
@@ -385,18 +394,18 @@ namespace TaskMaster.ViewModels
 			foreach (var item in _selectedItems)
 				list.Add(item as TaskBase);
 
-			int indexDroppedOn = TasksList.IndexOf(dropedOnTask);
+			int indexDroppedOn = TasksList.TasksList.IndexOf(dropedOnTask);
 
 			foreach (TaskBase item in list)
 			{
-				int indexDropped = TasksList.IndexOf(item);
+				int indexDropped = TasksList.TasksList.IndexOf(item);
 
-				TasksList.RemoveAt(indexDropped);
+				TasksList.TasksList.RemoveAt(indexDropped);
 
 				if (indexDroppedOn > -1)
-					TasksList.Insert(indexDroppedOn, item);
-				else if (indexDroppedOn >= (TasksList.Count - 1))
-					TasksList.Add(item);
+					TasksList.TasksList.Insert(indexDroppedOn, item);
+				else if (indexDroppedOn >= (TasksList.TasksList.Count - 1))
+					TasksList.TasksList.Add(item);
 			}
 
 			return;
@@ -406,311 +415,76 @@ namespace TaskMaster.ViewModels
 
 		#region Script file handling
 
-		//public void New(bool isTest, string name)
+		//public void New()
 		//{
-		//	_isIgnoreChanges = true;
+		//	ScriptNameView scriptNameView = new ScriptNameView();
 
-		//	if (isTest)
-		//		CurrentScript = new TestData();
-		//	else
-		//		CurrentScript = new ScriptData();
-		//	CurrentScript.Name = name;
+		//	scriptNameView.Title = "Task Name";
+		//	scriptNameView.SubTitle = "New Task name";
+		//	scriptNameView.ButtonTitle = "Create";
+		//	scriptNameView.ScriptName = null;
 
-		//	CurrentScript.ScriptPath = null;
-		//	_taskIndex = 1;
-
-		//	IsScriptEnabled = true;
-
-		//	GetScriptDiagram();
-
-		//	//CurrentScript.TasksListChanged +=
-		//	//		TasksListChangedHandler;
-
-		//	LoggerService.Inforamtion(this, "New script created: " + CurrentScript.Name);
-		//	_isIgnoreChanges = false;
-
-		//	IsChanged = true;
-		//}
-
-
-		//public void Open(ScriptData script = null, string path = null, bool allowTests = true)
-		//{
-		//	if (CurrentScript != null)
+		//	bool? result = scriptNameView.ShowDialog();
+		//	if (result != true)
 		//	{
-		//		bool isCancel = SaveIfNeeded();
-		//		if (isCancel)
-		//			return;
-
-		//	}
-
-		//	try
-		//	{
-
-		//		_isIgnoreChanges = true;
-
-		//		if (script == null)
-		//		{
-
-		//			if (path == null)
-		//			{
-		//				OpenFileDialog openFileDialog = new OpenFileDialog();
-		//				openFileDialog.Filter = "Script files (*.scr;*.tst)|*.scr;*.tst";
-
-		//				string initDir = "";
-		//				if (!string.IsNullOrEmpty(_scriptUserData.LastDesignScriptPath))
-		//					initDir = _scriptUserData.LastDesignScriptPath;
-		//				if (Directory.Exists(initDir) == false)
-		//					initDir = "";
-		//				openFileDialog.InitialDirectory = initDir;
-		//				bool? result = openFileDialog.ShowDialog();
-
-		//				if (result != true)
-		//					return;
-
-		//				_scriptUserData.LastDesignScriptPath =
-		//					System.IO.Path.GetDirectoryName(openFileDialog.FileName);
-
-
-		//				IsLoadingScript = true;
-
-		//				path = openFileDialog.FileName;
-		//			}
-
-		//			if (File.Exists(path) == false)
-		//			{
-		//				LoggerService.Error(this, "The file " + path + " could not be found", "Load Error");
-		//				_isIgnoreChanges = false;
-		//				return;
-		//			}
-
-		//			string jsonString = File.ReadAllText(path);
-
-		//			JsonSerializerSettings settings = new JsonSerializerSettings();
-		//			settings.Formatting = Formatting.Indented;
-		//			settings.TypeNameHandling = TypeNameHandling.All;
-		//			CurrentScript = JsonConvert.DeserializeObject(jsonString, settings) as ScriptData;
-
-		//			CurrentScript.ScriptPath = path;
-		//		}
-		//		else
-		//			CurrentScript = script;
-
-		//		if (CurrentScript == null)
-		//		{
-		//			LoggerService.Error(this, "Loaded an empty script", "Open Script Error");
-		//			_isIgnoreChanges = false;
-		//			return;
-		//		}
-
-		//		foreach (TaskBase scriptTask in CurrentScript.ScriptItemsList)
-		//		{
-		//			if (scriptTask is IScriptStepWithParameter withParam &&
-		//				withParam.Parameter != null)
-		//			{
-		//				string name = withParam.Parameter.Name;
-		//				if (withParam.Parameter is MCU_ParamData mcuParam)
-		//					name = mcuParam.Cmd;
-
-		//				DeviceParameterData data = GetParameter(
-		//					withParam.Parameter.DeviceType,
-		//					name);
-		//				if (data != null)
-		//					withParam.Parameter = data;
-		//			}
-
-		//			scriptTask.PostLoad(
-		//				_devicesContainer,
-		//				CurrentScript);
-		//		}
-
-
-		//		_taskIndex = 0;
-
-		//		foreach (TaskBase task in CurrentScript.ScriptItemsList)
-		//		{
-		//			if (_taskIndex < task.ID)
-		//				_taskIndex = task.ID;
-
-		//			task.IsExpanded = true;
-		//			task.TaskPropertyChangeEvent += TaskPropertyChangedHandler;
-
-
-
-		//			if (task.PassNextId >= 0)
-		//			{
-		//				foreach (TaskBase passNextTask in CurrentScript.ScriptItemsList)
-		//				{
-		//					if (passNextTask.ID == task.PassNextId)
-		//					{
-		//						task.PassNext = passNextTask;
-		//						break;
-		//					}
-		//				}
-		//			}
-
-		//			if (task.FailNextId >= 0)
-		//			{
-		//				foreach (TaskBase failNextTask in CurrentScript.ScriptItemsList)
-		//				{
-		//					if (failNextTask.ID == task.FailNextId)
-		//					{
-		//						task.FailNext = failNextTask;
-		//						break;
-		//					}
-		//				}
-		//			}
-
-
-		//		}
-
-		//		_taskIndex++;
-
-		//		IsScriptEnabled = true;
-
-		//		LoggerService.Inforamtion(this, "Script opened: " + CurrentScript.Name);
-
-
-
-		//		IsLoadingScript = false;
-
-		//		GetScriptDiagram();
-
-		//		_isIgnoreChanges = false;
-		//		IsChanged = false;
-
-		//	}
-		//	catch(Exception ex) 
-		//	{
-		//		LoggerService.Error(this, "Failed to open a script", "Script Error", ex);
-		//	}
-
-		//}
-
-		//private DeviceParameterData GetParameter(
-		//	DeviceTypesEnum deviceType,
-		//	string paramName)
-		//{
-		//	if (_devicesContainer.TypeToDevicesFullData.ContainsKey(deviceType) == false)
-		//		return null;
-
-		//	DeviceData deviceData =
-		//		_devicesContainer.TypeToDevicesFullData[deviceType].Device;
-
-		//	DeviceParameterData data = null;
-		//	if(deviceType == DeviceTypesEnum.MCU)
-		//		data = deviceData.ParemetersList.ToList().Find((p) => ((MCU_ParamData)p).Cmd == paramName);
-		//	else
-		//		data = deviceData.ParemetersList.ToList().Find((p) => p.Name == paramName);
-
-		//	return data;
-		//}
-
-		//public void Save()
-		//{
-		//	Save(CurrentScript is TestData);
-		//}
-
-		//public void Save(bool isTest)
-		//{
-		//	if (CurrentScript == null)
 		//		return;
-
-		//	try
-		//	{
-
-		//		bool isValid = _scriptValidation.Validate(CurrentScript);
-		//		if (!isValid)
-		//			return;
-
-		//		_isIgnoreChanges = true;
-
-		//		string saveType = "Script";
-		//		string extention = "scr";
-		//		if (isTest)
-		//		{
-		//			saveType = "Test";
-		//			extention = "tst";
-		//		}
-
-		//		bool isNameDifferentFromFile = IsNameDifferentFromFile();
-		//		if (isNameDifferentFromFile)
-		//		{
-		//			string fileName = Path.GetFileName(CurrentScript.ScriptPath);
-		//			string extension = Path.GetExtension(CurrentScript.ScriptPath);
-		//			fileName = fileName.Replace(extension, string.Empty);
-		//			string str =
-		//				"The name of the \"" + fileName + "\" file name is different from the \"" + CurrentScript.Name + "\" script name.\r\n" +
-		//				"File name: " + fileName + "\r\n" +
-		//				"saveType name: " + CurrentScript.Name + "\r\n" +
-		//				"Do you wish to change the file name?";
-		//			MessageBoxResult result = MessageBox.Show(
-		//				str,
-		//				"Warning",
-		//				MessageBoxButton.YesNoCancel);
-		//			if (result == MessageBoxResult.Cancel)
-		//				return;
-		//			if (result == MessageBoxResult.Yes)
-		//			{
-		//				CurrentScript.ScriptPath = CurrentScript.ScriptPath.Replace(fileName, CurrentScript.Name);
-		//			}
-		//		}
-
-
-		//		if (string.IsNullOrEmpty(CurrentScript.ScriptPath))
-		//		{
-		//			SaveFileDialog saveFileDialog = new SaveFileDialog();
-		//			saveFileDialog.FileName = CurrentScript.Name;
-		//			saveFileDialog.Filter = saveType + " Files | *." + extention;
-		//			bool? result = saveFileDialog.ShowDialog();
-		//			if (result != true)
-		//				return;
-
-		//			CurrentScript.ScriptPath = saveFileDialog.FileName;
-		//		}
-
-		//		// Save Json
-		//		JsonSerializerSettings settings = new JsonSerializerSettings();
-		//		settings.Formatting = Formatting.Indented;
-		//		settings.TypeNameHandling = TypeNameHandling.All;
-		//		var sz = JsonConvert.SerializeObject(CurrentScript, settings);
-		//		File.WriteAllText(CurrentScript.ScriptPath, sz);
-
-		//		LoggerService.Inforamtion(this, "Script saved");
-
-		//		ScriptIsSavedEvent?.Invoke(this, null);
-		//		_isIgnoreChanges = false;
-		//		IsChanged = false;
-		//	}
-		//	catch (Exception ex)
-		//	{
-		//		LoggerService.Error(this, "Failed to save a script", "Script Error", ex);
 		//	}
 		//}
 
-		//private bool IsNameDifferentFromFile()
-		//{
-		//	if(string.IsNullOrEmpty(CurrentScript.ScriptPath) || 
-		//		CurrentScript == null || string.IsNullOrEmpty(CurrentScript.Name))
-		//	{
-		//		return false;
-		//	}	
 
-		//	string fileName = Path.GetFileName(CurrentScript.ScriptPath);
-		//	string extension = Path.GetExtension(CurrentScript.ScriptPath);
-		//	fileName = fileName.Replace(extension, string.Empty);
+		public void Load()
+		{
+			OpenFileDialog openFileDialog = new OpenFileDialog();
+			openFileDialog.Filter = "Tasks List files (*.tsk)|*.tsk;";
 
-		//	if(fileName.ToLower() != CurrentScript.Name.ToLower())
-		//		return true;
+			//string initDir = "";
+			//if (!string.IsNullOrEmpty(_scriptUserData.LastDesignScriptPath))
+			//	initDir = _scriptUserData.LastDesignScriptPath;
+			//if (Directory.Exists(initDir) == false)
+			//	initDir = "";
+			//openFileDialog.InitialDirectory = initDir;
+			bool? result = openFileDialog.ShowDialog();
 
-		//	return false;
-		//}
+			if (result != true)
+				return;
+
+			TasksList.TasksListPath = openFileDialog.FileName;
+
+			string jsonString = File.ReadAllText(openFileDialog.FileName);
+			JsonSerializerSettings settings = new JsonSerializerSettings();
+			settings.Formatting = Formatting.Indented;
+			settings.TypeNameHandling = TypeNameHandling.All;
+			TasksList = JsonConvert.DeserializeObject(jsonString, settings) as
+				TasksListData;
+		}
+
+
+		public void Save()
+		{
+			SaveFileDialog saveFileDialog = new SaveFileDialog();
+			//saveFileDialog.FileName = CurrentScript.Name;
+			saveFileDialog.Filter = "Tasks List files (*.tsk)|*.tsk;";
+			bool? result = saveFileDialog.ShowDialog();
+			if (result != true)
+				return;
+
+			JsonSerializerSettings settings = new JsonSerializerSettings();
+			settings.Formatting = Formatting.Indented;
+			settings.TypeNameHandling = TypeNameHandling.All;
+			var sz = JsonConvert.SerializeObject(TasksList, settings);
+			File.WriteAllText(saveFileDialog.FileName, sz);
+
+			TasksList.TasksListPath = saveFileDialog.FileName;
+		}
+
+
 
 		#endregion Script file handling
 
 
 		public void AddTask(
-			TaskBase source_TaskBase,
-			DragEventArgs e)
+		TaskBase source_TaskBase,
+		DragEventArgs e)
 		{
 			TaskBase new_TaskBase = source_TaskBase.Clone() as TaskBase;
 
@@ -725,7 +499,7 @@ namespace TaskMaster.ViewModels
 			string name,
 			DragEventArgs e)
 		{
-			TasksList.Add(new_TaskBase);
+			TasksList.TasksList.Add(new_TaskBase);
 		}
 
 
@@ -744,7 +518,7 @@ namespace TaskMaster.ViewModels
 				dropedOnTask = listViewItem.DataContext as TaskBase;
 			}
 
-			int index = TasksList.IndexOf(dropedOnTask);
+			int index = TasksList.TasksList.IndexOf(dropedOnTask);
 			//if (index == -1 || index == (TasksList.Count - 1))
 			//	return -1;
 
@@ -767,9 +541,9 @@ namespace TaskMaster.ViewModels
 				LoggerService.Inforamtion(this, "Task selected: " + _selectedTask.Name);
 		}
 
-		
 
-		
+
+
 
 		private void Delete()
 		{
@@ -782,16 +556,16 @@ namespace TaskMaster.ViewModels
 
 			foreach (TaskBase item in list)
 			{
-				int index = TasksList.IndexOf(item);
+				int index = TasksList.TasksList.IndexOf(item);
 				LoggerService.Inforamtion(this, "Task removed: " + item.Description);
-				TasksList.Remove(item);
+				TasksList.TasksList.Remove(item);
 
 			}
 
 			IsChanged = true;
 		}
 
-		
+
 		private void CopyScriptTask()
 		{
 			Copy();
@@ -821,7 +595,7 @@ namespace TaskMaster.ViewModels
 		{
 			if (IsChanged)
 			{
-				
+
 			}
 
 			return false;
@@ -830,11 +604,11 @@ namespace TaskMaster.ViewModels
 
 		private void Copy()
 		{
-			List<(int,TaskBase)> list = new List<(int, TaskBase)>();
+			List<(int, TaskBase)> list = new List<(int, TaskBase)>();
 			foreach (TaskBase item in _selectedItems)
 			{
-				int index = TasksList.IndexOf(item);
-				list.Add((index,item));
+				int index = TasksList.TasksList.IndexOf(item);
+				list.Add((index, item));
 			}
 
 			list.Sort((a, b) => a.Item1.CompareTo(b.Item1));
@@ -855,7 +629,7 @@ namespace TaskMaster.ViewModels
 		{
 			if (Clipboard.ContainsData("MyTask") == false)
 				return;
-			
+
 			string copyString = (string)Clipboard.GetData("MyTask");
 			JsonSerializerSettings settings = new JsonSerializerSettings();
 			settings.Formatting = Formatting.Indented;
@@ -865,13 +639,13 @@ namespace TaskMaster.ViewModels
 
 			foreach (TaskBase item in list)
 			{
-				
+
 				AddTask_do(
 					item as TaskBase,
 					item.GetType().Name,
 					null);
 
-			//	TasksList[TasksList.Count - 1].PassNext = TasksList[TasksList.Count - 2];
+				//	TasksList[TasksList.Count - 1].PassNext = TasksList[TasksList.Count - 2];
 			}
 
 
@@ -987,6 +761,9 @@ namespace TaskMaster.ViewModels
 
 		public RelayCommand CopyCommand { get; private set; }
 		public RelayCommand PastCommand { get; private set; }
+
+		//public RelayCommand NewCommand { get; private set; }
+		public RelayCommand LoadCommand { get; private set; }
 		public RelayCommand SaveCommand { get; private set; }
 
 

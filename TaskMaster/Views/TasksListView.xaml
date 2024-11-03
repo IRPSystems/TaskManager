@@ -95,10 +95,34 @@
 
                 <Button Style="{StaticResource ButtonWithIconStyle}"
                                 Width="40"
-                                Margin="0,0,5,0"
+                                Margin="0,0,50,0"
                                 ToolTip="Export to Word document"
                                 Command="{Binding ExportScriptToPDFCommand}">
                     <iconPacks:PackIconMaterial Kind="FileExport" Width="30" Height="30"/>
+                </Button>
+
+                <!--<Button Style="{StaticResource ButtonWithIconStyle}"
+                        Width="40"
+                        Margin="0,0,5,0"
+                        ToolTip="New task"
+                        Command="{Binding NewCommand}">
+                    <iconPacks:Material Kind="File" Width="30" Height="30"/>
+                </Button>-->
+
+                <Button Style="{StaticResource ButtonWithIconStyle}"
+                        Width="40"
+                        Margin="0,0,5,0"
+                        ToolTip="Load task"
+                        Command="{Binding LoadCommand}">
+                    <iconPacks:Material Kind="FolderOpen" Width="30" Height="30"/>
+                </Button>
+
+                <Button Style="{StaticResource ButtonWithIconStyle}"
+                        Width="40"
+                        Margin="0,0,5,0"
+                        ToolTip="Save task"
+                        Command="{Binding SaveCommand}">
+                    <iconPacks:Material Kind="ContentSave" Width="30" Height="30"/>
                 </Button>
 
             </StackPanel>
@@ -130,7 +154,7 @@
 
 
         <ListView Grid.Row="1" 
-                  ItemsSource="{Binding TasksList, UpdateSourceTrigger=PropertyChanged}"
+                  ItemsSource="{Binding TasksList.TasksList, UpdateSourceTrigger=PropertyChanged}"
                   Background="Transparent"
                   ItemTemplate="{StaticResource TaskTamplate}"
                   AllowDrop="True" >
