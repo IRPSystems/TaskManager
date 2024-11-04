@@ -4,10 +4,12 @@ using Microsoft.Win32;
 using Newtonsoft.Json;
 using ScriptHandler.Views;
 using Services.Services;
+using System;
 using System.Collections;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Security.AccessControl;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -256,11 +258,6 @@ namespace TaskMaster.ViewModels
 
 		}
 
-		private void DropOfParameter(DragEventArgs e)
-		{
-
-		}
-
 
 		private void GetDroppedAndDroppedOn(
 			DragEventArgs e,
@@ -374,16 +371,20 @@ namespace TaskMaster.ViewModels
 		private void MoveNode(DragEventArgs e)
 		{
 			TaskBase dropedOnTask = null;
+			int indexDroppedOn = -1;
 			ListViewItem listViewItem =
 						FindAncestorService.FindAncestor<ListViewItem>((DependencyObject)e.OriginalSource);
 			if (listViewItem != null)
 			{
 				dropedOnTask = listViewItem.DataContext as TaskBase;
-			}
 
-			if (dropedOnTask == null)
-			{
-				return;
+
+				if (dropedOnTask == null)
+				{
+					return;
+				}
+				
+				indexDroppedOn = TasksList.TasksList.IndexOf(dropedOnTask);
 			}
 
 
@@ -394,17 +395,17 @@ namespace TaskMaster.ViewModels
 			foreach (var item in _selectedItems)
 				list.Add(item as TaskBase);
 
-			int indexDroppedOn = TasksList.TasksList.IndexOf(dropedOnTask);
+			
 
 			foreach (TaskBase item in list)
 			{
 				int indexDropped = TasksList.TasksList.IndexOf(item);
 
-				TasksList.TasksList.RemoveAt(indexDropped);
+				TasksList.TasksList.Remove(item);
 
-				if (indexDroppedOn > -1)
+				if(indexDroppedOn >= 0)
 					TasksList.TasksList.Insert(indexDroppedOn, item);
-				else if (indexDroppedOn >= (TasksList.TasksList.Count - 1))
+				else
 					TasksList.TasksList.Add(item);
 			}
 
