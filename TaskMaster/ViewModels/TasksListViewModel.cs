@@ -2,14 +2,10 @@
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Win32;
 using Newtonsoft.Json;
-using ScriptHandler.Views;
 using Services.Services;
-using System;
 using System.Collections;
 using System.Collections.ObjectModel;
 using System.IO;
-using System.Security.AccessControl;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -476,6 +472,11 @@ namespace TaskMaster.ViewModels
 			File.WriteAllText(saveFileDialog.FileName, sz);
 
 			TasksList.TasksListPath = saveFileDialog.FileName;
+
+			string fileName = Path.GetFileName(saveFileDialog.FileName);
+			fileName = fileName.Replace(".tsk", string.Empty);
+
+			TasksList.TasksListName = fileName;
 		}
 
 
@@ -605,6 +606,9 @@ namespace TaskMaster.ViewModels
 
 		private void Copy()
 		{
+			if (_selectedItems == null || _selectedItems.Count == 0)
+				return;
+
 			List<(int, TaskBase)> list = new List<(int, TaskBase)>();
 			foreach (TaskBase item in _selectedItems)
 			{

@@ -33,6 +33,9 @@
 
     <UserControl.InputBindings>
 
+        <KeyBinding Command="{Binding CopyCommand}" 
+                                Gesture="CTRL+C" />
+
         <KeyBinding Command="{Binding PastCommand}" 
                                 Gesture="CTRL+V" />
 
