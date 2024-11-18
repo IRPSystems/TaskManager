@@ -5,6 +5,47 @@
     <converters:RemoveBreakLineFromNameConverter x:Key="RemoveBreakLineFromNameConverter" />
     <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
 
+
+    <Style x:Key="CollapseExpandToggelButtonStyle" TargetType="ToggleButton">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ToggleButton">
+
+                    <Border BorderBrush="{DynamicResource MahApps.Brushes.Gray1}"
+                        BorderThickness="1"
+                        Background="Transparent"
+                        Name="brdr">
+
+                        <Grid >
+
+                            <TextBlock Name="plus" Text="+" FontSize="20" FontWeight="Bold" Visibility="Collapsed"
+                                      HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            <TextBlock Name="minus" Text="-" FontSize="20" FontWeight="Bold" Visibility="Visible"
+                                      HorizontalAlignment="Center" VerticalAlignment="Center"/>
+
+                        </Grid>
+
+                    </Border>
+
+                    <ControlTemplate.Triggers>
+
+                        <Trigger Property="IsChecked" Value="False">
+                            <Setter TargetName="plus" Property="Visibility" Value="Visible"/>
+                            <Setter TargetName="minus" Property="Visibility" Value="Collapsed"/>
+                        </Trigger>
+
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="brdr" Property="Background" Value="{DynamicResource MahApps.Brushes.Gray7}"/>
+                        </Trigger>
+
+                    </ControlTemplate.Triggers>
+
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+
     <DataTemplate x:Key="TaskTamplate">
         
         <Border BorderBrush="{Binding Converter={StaticResource RemoveBreakLineFromNameConverter}}"
@@ -27,37 +68,52 @@
             </Border.Resources>
 
             <Grid Margin="10">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="27" />
-                    <RowDefinition Height="5" />
-                    <RowDefinition Height="Auto" />
-                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="25"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
 
-                <TextBlock Grid.Row="0" Text="{Binding TaskTypeName}" FontWeight="DemiBold" />
+                <ToggleButton Grid.Row="0" Grid.Column="0" 
+                              Name="tb"
+                              IsChecked="{Binding IsExpanded, Mode=TwoWay}"
+                              Width="20" Height="20"
+                              HorizontalAlignment="Left" VerticalAlignment="Top"
+                              Style="{StaticResource CollapseExpandToggelButtonStyle}"/>
 
 
-                <Grid Grid.Row="2"
-                      Visibility="{Binding IsExpanded, Converter={StaticResource BooleanToVisibilityConverter}}">
+
+                <Grid Grid.Column="1">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="27" />
                         <RowDefinition Height="5" />
-                        <RowDefinition Height="27" />
+                        <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
 
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="100" />
-                        <ColumnDefinition Width="5" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Row="0" Text="{Binding TaskTypeName}" FontWeight="DemiBold" />
 
-                    
-                    <TextBlock Grid.Row="0" Grid.Column="0" Text="Name" />
-                    <TextBox Grid.Row="0" Grid.Column="2" Text="{Binding Name}" />
 
-                    <TextBlock Grid.Row="2" Grid.Column="0" Text="Description" />
-                    <TextBox Grid.Row="2" Grid.Column="2" Text="{Binding Description}" />
+                    <Grid Grid.Row="2"
+                          Visibility="{Binding IsExpanded, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="27" />
+                            <RowDefinition Height="5" />
+                            <RowDefinition Height="27" />
+                        </Grid.RowDefinitions>
+
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="100" />
+                            <ColumnDefinition Width="5" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+
+                        <TextBlock Grid.Row="0" Grid.Column="0" Text="Name" />
+                        <TextBox Grid.Row="0" Grid.Column="2" Text="{Binding Name}" />
+
+                        <TextBlock Grid.Row="2" Grid.Column="0" Text="Description" />
+                        <TextBox Grid.Row="2" Grid.Column="2" Text="{Binding Description}" />
+                    </Grid>
                 </Grid>
-                
             </Grid>
         </Border>
 

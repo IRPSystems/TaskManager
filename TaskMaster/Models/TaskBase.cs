@@ -17,6 +17,12 @@ namespace TaskMaster.Models
 		[JsonIgnore]
 		public bool IsSelected { get; set; }
 
+		public TaskBase() 
+		{
+			IsExpanded = true;
+			IsSelected = false;
+		}
+
 		public object Clone()
 		{
 			return this.MemberwiseClone();
