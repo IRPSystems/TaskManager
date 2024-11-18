@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Win32;
 using Newtonsoft.Json;
+using ScriptHandler.Views;
 using Services.Services;
 using System.Collections;
 using System.Collections.ObjectModel;
@@ -55,10 +56,6 @@ namespace TaskMaster.ViewModels
 
 		public TasksListViewModel()
 		{
-			TasksList = new TasksListData()
-			{
-				TasksList = new ObservableCollection<TaskBase>()
-			};
 
 			MoveTaskUpCommand = new RelayCommand(MoveTaskUp);
 			MoveTaskDownCommand = new RelayCommand(MoveTaskDown);
@@ -72,7 +69,7 @@ namespace TaskMaster.ViewModels
 			CopyCommand = new RelayCommand(Copy);
 			PastCommand = new RelayCommand(Past);
 
-			//NewCommand = new RelayCommand(New);
+			NewCommand = new RelayCommand(New);
 			SaveCommand = new RelayCommand(Save);
 			LoadCommand = new RelayCommand(Load);
 
@@ -86,6 +83,8 @@ namespace TaskMaster.ViewModels
 
 			LoggerService.Inforamtion(this, "Finished init of Design");
 
+
+			
 			IsChanged = false;
 
 		}
@@ -97,8 +96,6 @@ namespace TaskMaster.ViewModels
 		private void Loaded()
 		{
 			IsChanged = false;
-
-
 		}
 
 		#region Expand/Collapse
@@ -412,25 +409,37 @@ namespace TaskMaster.ViewModels
 
 		#region Script file handling
 
-		//public void New()
-		//{
-		//	ScriptNameView scriptNameView = new ScriptNameView();
+		public void New()
+		{
+			bool isContinue = SaveIfNeeded();
+			if (isContinue == false)
+				return;
 
-		//	scriptNameView.Title = "Task Name";
-		//	scriptNameView.SubTitle = "New Task name";
-		//	scriptNameView.ButtonTitle = "Create";
-		//	scriptNameView.ScriptName = null;
+			ScriptNameView scriptNameView = new ScriptNameView();
 
-		//	bool? result = scriptNameView.ShowDialog();
-		//	if (result != true)
-		//	{
-		//		return;
-		//	}
-		//}
+			scriptNameView.Title = "Task Name";
+			scriptNameView.SubTitle = "New Task name";
+			scriptNameView.ButtonTitle = "Create";
+			scriptNameView.ScriptName = null;
+
+			bool? result = scriptNameView.ShowDialog();
+			if (result != true)
+			{
+				return;
+			}
+
+			TasksList = new TasksListData();
+			InitTasksList();
+			IsChanged = false;
+		}
 
 
 		public void Load()
 		{
+			bool isContinue = SaveIfNeeded();
+			if (isContinue == false)
+				return;
+
 			OpenFileDialog openFileDialog = new OpenFileDialog();
 			openFileDialog.Filter = "Tasks List files (*.tsk)|*.tsk;";
 
@@ -445,7 +454,7 @@ namespace TaskMaster.ViewModels
 			if (result != true)
 				return;
 
-			TasksList.TasksListPath = openFileDialog.FileName;
+			
 
 			string jsonString = File.ReadAllText(openFileDialog.FileName);
 			JsonSerializerSettings settings = new JsonSerializerSettings();
@@ -453,30 +462,41 @@ namespace TaskMaster.ViewModels
 			settings.TypeNameHandling = TypeNameHandling.All;
 			TasksList = JsonConvert.DeserializeObject(jsonString, settings) as
 				TasksListData;
+
+			TasksList.TasksListPath = openFileDialog.FileName;
+			InitTasksList();
+
+			IsChanged = false;
 		}
 
 
 		public void Save()
 		{
-			SaveFileDialog saveFileDialog = new SaveFileDialog();
-			//saveFileDialog.FileName = CurrentScript.Name;
-			saveFileDialog.Filter = "Tasks List files (*.tsk)|*.tsk;";
-			bool? result = saveFileDialog.ShowDialog();
-			if (result != true)
-				return;
+			if (string.IsNullOrEmpty(TasksList.TasksListPath))
+			{
+				SaveFileDialog saveFileDialog = new SaveFileDialog();
+				//saveFileDialog.FileName = CurrentScript.Name;
+				saveFileDialog.Filter = "Tasks List files (*.tsk)|*.tsk;";
+				bool? result = saveFileDialog.ShowDialog();
+				if (result != true)
+					return;
+
+				TasksList.TasksListPath = saveFileDialog.FileName;
+
+				string fileName = Path.GetFileName(saveFileDialog.FileName);
+				fileName = fileName.Replace(".tsk", string.Empty);
+
+				TasksList.TasksListName = fileName;
+
+			}
 
 			JsonSerializerSettings settings = new JsonSerializerSettings();
 			settings.Formatting = Formatting.Indented;
 			settings.TypeNameHandling = TypeNameHandling.All;
 			var sz = JsonConvert.SerializeObject(TasksList, settings);
-			File.WriteAllText(saveFileDialog.FileName, sz);
+			File.WriteAllText(TasksList.TasksListPath, sz);
 
-			TasksList.TasksListPath = saveFileDialog.FileName;
-
-			string fileName = Path.GetFileName(saveFileDialog.FileName);
-			fileName = fileName.Replace(".tsk", string.Empty);
-
-			TasksList.TasksListName = fileName;
+			IsChanged = false;
 		}
 
 
@@ -593,16 +613,6 @@ namespace TaskMaster.ViewModels
 			}
 		}
 
-		public bool SaveIfNeeded()
-		{
-			if (IsChanged)
-			{
-
-			}
-
-			return false;
-		}
-
 
 		private void Copy()
 		{
@@ -663,7 +673,42 @@ namespace TaskMaster.ViewModels
 			e.Handled = true;
 		}
 
+		public bool SaveIfNeeded()
+		{
+			if(IsChanged == false) 
+				return true;
 
+			if(TasksList == null)
+				return true;
+
+			MessageBoxResult result =
+				MessageBox.Show(
+					"Changes were made to the tasks list.\r\nDo you wish to save them?",
+					"Warning",
+					MessageBoxButton.YesNoCancel);
+			if (result == MessageBoxResult.Cancel)
+				return false;
+			else if (result == MessageBoxResult.Yes)
+				Save();
+
+			return true;
+		}
+
+		private void TasksList_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+		{
+			IsChanged = true;
+		}
+
+		private void TasksList_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+		{
+			IsChanged = true;
+		}
+
+		private void InitTasksList()
+		{
+			TasksList.PropertyChanged += TasksList_PropertyChanged;
+			TasksList.TasksList.CollectionChanged += TasksList_CollectionChanged;
+		}
 
 		#endregion Methods
 
@@ -767,7 +812,7 @@ namespace TaskMaster.ViewModels
 		public RelayCommand CopyCommand { get; private set; }
 		public RelayCommand PastCommand { get; private set; }
 
-		//public RelayCommand NewCommand { get; private set; }
+		public RelayCommand NewCommand { get; private set; }
 		public RelayCommand LoadCommand { get; private set; }
 		public RelayCommand SaveCommand { get; private set; }
 

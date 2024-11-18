@@ -3,6 +3,7 @@
                     xmlns:converters="clr-namespace:TaskMaster.Converters">
 
     <converters:RemoveBreakLineFromNameConverter x:Key="RemoveBreakLineFromNameConverter" />
+    <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
 
     <DataTemplate x:Key="TaskTamplate">
         
@@ -24,29 +25,38 @@
                     </Style.Triggers>
                 </Style>
             </Border.Resources>
-            
+
             <Grid Margin="10">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="27" />
                     <RowDefinition Height="5" />
-                    <RowDefinition Height="27" />
-                    <RowDefinition Height="5" />
-                    <RowDefinition Height="27" />
+                    <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="100" />
-                    <ColumnDefinition Width="5" />
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Row="0" Text="{Binding TaskTypeName}" FontWeight="DemiBold" />
 
-                <TextBlock Grid.Row="0" Grid.Column="2" Text="{Binding TaskTypeName}" FontWeight="DemiBold" />
 
-                <TextBlock Grid.Row="2" Grid.Column="0" Text="Name" />
-                <TextBox Grid.Row="2" Grid.Column="2" Text="{Binding Name}" />
+                <Grid Grid.Row="2"
+                      Visibility="{Binding IsExpanded, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="27" />
+                        <RowDefinition Height="5" />
+                        <RowDefinition Height="27" />
+                    </Grid.RowDefinitions>
 
-                <TextBlock Grid.Row="4" Grid.Column="0" Text="Description" />
-                <TextBox Grid.Row="4" Grid.Column="2" Text="{Binding Description}" />
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="100" />
+                        <ColumnDefinition Width="5" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    
+                    <TextBlock Grid.Row="0" Grid.Column="0" Text="Name" />
+                    <TextBox Grid.Row="0" Grid.Column="2" Text="{Binding Name}" />
+
+                    <TextBlock Grid.Row="2" Grid.Column="0" Text="Description" />
+                    <TextBox Grid.Row="2" Grid.Column="2" Text="{Binding Description}" />
+                </Grid>
                 
             </Grid>
         </Border>
