@@ -17,6 +17,7 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="pack://application:,,,/Controls;component/Resources/ButtonWithIcon.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/ScriptHandler;component/Resources/ScriptLogDiagramTemplate.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </mah:MetroWindow.Resources>
