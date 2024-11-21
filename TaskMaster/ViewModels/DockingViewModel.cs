@@ -3,6 +3,7 @@ using Controls.ViewModels;
 using ScriptHandler.ViewModels;
 using ScriptHandler.Views;
 using System.Windows.Controls;
+using TaskMaster.Views;
 
 namespace TaskMaster.ViewModels
 {
@@ -18,23 +19,29 @@ namespace TaskMaster.ViewModels
 		#region Constructor
 
 		public DockingViewModel(
-			DesignViewModel designViewModel) :
+			DesignViewModel designViewModel,
+			RunViewModel run) :
 			base("DockingReleaseTask")
 		{
-			CreateWindows(designViewModel);
+			CreateWindows(designViewModel, run);
 		}
 
 		#endregion Constructor
 
 		#region Methods
 
-		private void CreateWindows(DesignViewModel designViewModel)
+		private void CreateWindows(
+			DesignViewModel designViewModel,
+			RunViewModel run)
 		{
 			DockFill = true;
 
 			DesignView designView = new DesignView() { DataContext = designViewModel };
 			CreateTabbedWindow(designView, "Design", string.Empty, out _design);
 			SetDesiredWidthInDockedMode(_design, 1200);
+
+			RunView runView = new RunView() { DataContext = run };
+			CreateTabbedWindow(runView, "Run", "Design", out _run);
 		}
 
 		#endregion Methods

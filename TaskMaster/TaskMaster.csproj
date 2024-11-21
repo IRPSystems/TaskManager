@@ -22,6 +22,7 @@
     <ProjectReference Include="..\Infrastructure\Entities\Entities.csproj" />
     <ProjectReference Include="..\Infrastructure\Services\Services.csproj" />
     <ProjectReference Include="..\ScriptsInfrastructure\ScriptHandler\ScriptHandler.csproj" />
+    <ProjectReference Include="..\ScriptsInfrastructure\ScriptRunner\ScriptRunner.csproj" />
   </ItemGroup>
 
   <ItemGroup>
