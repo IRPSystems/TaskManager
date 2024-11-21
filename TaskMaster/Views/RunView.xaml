@@ -6,74 +6,122 @@
              xmlns:script_runner_views="clr-namespace:ScriptRunner.Views;assembly=ScriptRunner"
              xmlns:script_runner_converters="clr-namespace:ScriptRunner.Converter;assembly=ScriptRunner"
              xmlns:script_handler_converters="clr-namespace:ScriptHandler.Converter;assembly=ScriptHandler"
+             xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"             
              xmlns:controls="clr-namespace:Controls.Views;assembly=Controls"
              xmlns:local="clr-namespace:TaskMaster.Views"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="1000">
 
     <UserControl.Resources>
-        <script_runner_converters:StepVisibilityConverter x:Key="StepVisibilityConverter" />
-        <script_handler_converters:ContentConverter x:Key="ContentConverter" />
-        <script_runner_converters:ErrorMessageVisibilityConverter x:Key="ErrorMessageVisibilityConverter" />
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/Controls;component/Resources/ButtonWithIcon.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/Controls;component/Resources/AbortButtonStyle.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/ScriptRunner;component/Resources/ScriptStepTemplate.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+
+            <script_runner_converters:StepVisibilityConverter x:Key="StepVisibilityConverter" />
+            <script_handler_converters:ContentConverter x:Key="ContentConverter" />
+            <script_runner_converters:ErrorMessageVisibilityConverter x:Key="ErrorMessageVisibilityConverter" />
+
+        </ResourceDictionary>        
     </UserControl.Resources>
-    
+
     <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="350"/>
-            <ColumnDefinition Width="10"/>
-            <ColumnDefinition Width="*"/>
-        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30" />
+            <RowDefinition Height="10" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
 
-        <script_runner_views:RunExplorerView DataContext="{Binding RunExplorer}" MaxWidth="350"/>
-
-        <Grid Grid.Column="2" IsEnabled="{Binding IsConnected}">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="30"/>
-                <RowDefinition Height="5"/>
-                <RowDefinition Height="30"/>
-                <RowDefinition Height="5"/>
-                <RowDefinition Height="*"/>
-            </Grid.RowDefinitions>
-
-            <controls:HeaderView Grid.Row="0" Title="{Binding RunScript.CurrentScript.CurrentScript.Name}" FontSize="20" HeaderBackground="{DynamicResource MahApps.Brushes.Accent2}"/>
-            <controls:HeaderView x:Name="step" Grid.Row="2" Title="{Binding RunScript.CurrentScript.CurrentStep.Description}" FontSize="16" HeaderBackground="{DynamicResource MahApps.Brushes.Accent2}"/>
+        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,2">
 
 
-            <ContentControl Grid.Row="4" 
-                    ContentTemplate="{Binding RunScript.CurrentScript.CurrentStep.Template}"
-                    Visibility="{Binding ErrorMessage, Converter={StaticResource StepVisibilityConverter}}">
+            <Button Style="{StaticResource ButtonWithIconStyle}"
+                    Width="30"
+                    Margin="0,0,5,0"
+                    ToolTip="Start all"
+                    Command="{Binding StartAllCommand}"
+                    IsEnabled="{Binding IsPlayEnabled}">
+                <iconPacks:Material Kind="Play" />
+            </Button>
 
-                <ContentControl.Content>
-                    <MultiBinding Converter="{StaticResource ContentConverter}">
-                        <Binding Path="RunScript.CurrentScript.CurrentStep.Description" />
-                        <Binding Path="RunScript.CurrentScript.CurrentStep"/>
-                    </MultiBinding>
-                </ContentControl.Content>
+            <Button Style="{StaticResource ButtonWithIconStyle}"
+                    Width="30"
+                    Margin="0,0,50,0"
+                    ToolTip="Foreward"
+                    Command="{Binding ForewardCommand}"                      
+                    IsEnabled="{Binding IsPlayNotEnabled}">
+                <iconPacks:PackIconMaterial Kind="SkipNext" />
+            </Button>
 
-            </ContentControl>
+            <Button Width="30"
+                    Margin="0,0,50,0"
+                    ToolTip="Abort"
+                    Command="{Binding AbortCommand}"
+                    Style="{StaticResource AbortButtonStyle}" />
 
-            <Grid Grid.Row="4" Background="Red"
-          Visibility="{Binding ErrorMessage, Converter={StaticResource ErrorMessageVisibilityConverter}}">
+
+        </StackPanel>
+
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="350"/>
+                <ColumnDefinition Width="10"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <script_runner_views:RunExplorerView DataContext="{Binding RunExplorer}" MaxWidth="350"/>
+
+            <Grid Grid.Column="2">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="30"/>
                     <RowDefinition Height="5"/>
-                    <RowDefinition Height="50"/>
+                    <RowDefinition Height="30"/>
+                    <RowDefinition Height="5"/>
+                    <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
 
-                <TextBox Grid.Row="0" 
-                 Text="{Binding ErrorMessage}"
-                 FontSize="30"
-                 TextWrapping="Wrap"
-                 VerticalAlignment="Center"
-                 HorizontalAlignment="Center"
-                 ScrollViewer.VerticalScrollBarVisibility="Auto"
-                 Background="Transparent"
-                 Foreground="White"
-                 IsReadOnly="True"
-                 BorderThickness="0"/>
+                <controls:HeaderView Grid.Row="0" Title="{Binding RunScript.CurrentScript.CurrentScript.Name}" FontSize="20" HeaderBackground="{DynamicResource MahApps.Brushes.Accent2}"/>
+                <controls:HeaderView x:Name="step" Grid.Row="2" Title="{Binding RunScript.CurrentScript.CurrentStep.Description}" FontSize="16" HeaderBackground="{DynamicResource MahApps.Brushes.Accent2}"/>
+
+
+                <ContentControl Grid.Row="4" 
+                                ContentTemplate="{Binding RunScript.CurrentScript.CurrentStep.Template}"
+                                Visibility="{Binding ErrorMessage, Converter={StaticResource StepVisibilityConverter}}">
+
+                    <ContentControl.Content>
+                        <MultiBinding Converter="{StaticResource ContentConverter}">
+                            <Binding Path="RunScript.CurrentScript.CurrentStep.Description" />
+                            <Binding Path="RunScript.CurrentScript.CurrentStep"/>
+                        </MultiBinding>
+                    </ContentControl.Content>
+
+                </ContentControl>
+
+                <Grid Grid.Row="4" Background="Red"
+                      Visibility="{Binding ErrorMessage, Converter={StaticResource ErrorMessageVisibilityConverter}}">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="5"/>
+                        <RowDefinition Height="50"/>
+                    </Grid.RowDefinitions>
+
+                    <TextBox Grid.Row="0" 
+                             Text="{Binding ErrorMessage}"
+                             FontSize="30"
+                             TextWrapping="Wrap"
+                             VerticalAlignment="Center"
+                             HorizontalAlignment="Center"
+                             ScrollViewer.VerticalScrollBarVisibility="Auto"
+                             Background="Transparent"
+                             Foreground="White"
+                             IsReadOnly="True"
+                             BorderThickness="0"/>
+                </Grid>
+
             </Grid>
 
         </Grid>
-
     </Grid>
 </UserControl>

@@ -51,7 +51,7 @@ namespace TaskMaster.ViewModels
 			ChangeDarkLight();
 
 			Design = new DesignViewModel(null, null, ReleaseTaskMasterUserData.ScriptUserData, "ReleaseTasks", false);
-			Run = new RunViewModel();
+			Run = new RunViewModel(ReleaseTaskMasterUserData.ScriptUserData);
 
 			Docking = new DockingViewModel(Design, Run);
 		}
