@@ -31,7 +31,7 @@ namespace TaskMaster
 			base.OnStartup(e);
 
 			SplashView splash = new SplashView();
-			splash.AppName = "Task Master";
+			splash.AppName = "Release Tasks Master";
 			splash.Show();
 
 			// Right now I'm showing main window right after splash screen but I will eventually wait until splash screen closes.
