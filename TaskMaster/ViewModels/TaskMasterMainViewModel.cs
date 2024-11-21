@@ -15,9 +15,6 @@ namespace TaskMaster.ViewModels
 
 		public DesignViewModel Design { get; set; }
 
-		//public TaskTypesListViewModel TaskTypesListVM { get; set; }
-
-		//public TasksListViewModel TasksListVM { get; set; }
 
 		public TaskMasterMainViewModel() 
 		{
@@ -26,9 +23,6 @@ namespace TaskMaster.ViewModels
 			TaskMasterUserData = TaskMasterUserData.LoadTaskMasterUserData("Evva");
 
 			Design = new DesignViewModel(null, null, TaskMasterUserData.ScriptUserData, "Tasks");
-
-			//TaskTypesListVM = new TaskTypesListViewModel(new DragDropData());
-			//TasksListVM = new TasksListViewModel();
 		}
 	}
 }
