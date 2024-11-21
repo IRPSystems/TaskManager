@@ -6,30 +6,30 @@ using System.IO;
 
 namespace TaskMaster.Models
 {
-	public class TaskMasterUserData: ObservableObject
+	public class ReleaseTaskMasterUserData: ObservableObject
 	{
 		public bool IsLightTheme { get; set; }
 
 		public ScriptUserData ScriptUserData { get; set; }
 
-		public TaskMasterUserData()
+		public ReleaseTaskMasterUserData()
 		{
 			ScriptUserData = new ScriptUserData();
 		}
 
-		public static TaskMasterUserData LoadTaskMasterUserData(string dirName)
+		public static ReleaseTaskMasterUserData LoadTaskMasterUserData(string dirName)
 		{
 
 			string path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
 			path = Path.Combine(path, dirName);
 			if (Directory.Exists(path) == false)
 			{
-				return new TaskMasterUserData();
+				return new ReleaseTaskMasterUserData();
 			}
-			path = Path.Combine(path, "TaskMasterUserData.json");
+			path = Path.Combine(path, "ReleaseTaskMasterUserData.json");
 			if (File.Exists(path) == false)
 			{
-				return new TaskMasterUserData();
+				return new ReleaseTaskMasterUserData();
 			}
 
 
@@ -37,7 +37,7 @@ namespace TaskMaster.Models
 			JsonSerializerSettings settings = new JsonSerializerSettings();
 			settings.Formatting = Formatting.Indented;
 			settings.TypeNameHandling = TypeNameHandling.All;
-			TaskMasterUserData askMasterUserData = JsonConvert.DeserializeObject(jsonString, settings) as TaskMasterUserData;
+			ReleaseTaskMasterUserData askMasterUserData = JsonConvert.DeserializeObject(jsonString, settings) as ReleaseTaskMasterUserData;
 			if (askMasterUserData == null)
 				return askMasterUserData;
 			
@@ -53,13 +53,13 @@ namespace TaskMaster.Models
 
 		public static void SaveTaskMasterUserData(
 			string dirName,
-			TaskMasterUserData taskMasterUserData)
+			ReleaseTaskMasterUserData taskMasterUserData)
 		{
 			string path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
 			path = Path.Combine(path, dirName);
 			if (Directory.Exists(path) == false)
 				Directory.CreateDirectory(path);
-			path = Path.Combine(path, "TaskMasterUserData.json");
+			path = Path.Combine(path, "ReleaseTaskMasterUserData.json");
 
 			JsonSerializerSettings settings = new JsonSerializerSettings();
 			settings.Formatting = Formatting.Indented;
