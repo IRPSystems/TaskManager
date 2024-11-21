@@ -5,6 +5,7 @@
                  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                  xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro" 
                  xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+                 xmlns:script_handler="clr-namespace:ScriptHandler.Views;assembly=ScriptHandler"
                  xmlns:local="clr-namespace:TaskMaster.Views"
                  WindowStartupLocation="CenterScreen"
                  mc:Ignorable="d"
@@ -16,36 +17,7 @@
             <RowDefinition Height="30" />
         </Grid.RowDefinitions>
 
-        <Grid>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="300" />
-                <ColumnDefinition Width="10" />
-                <ColumnDefinition Width="*" />
-            </Grid.ColumnDefinitions>
-
-            <local:TaskTypesListView Grid.Column="0" DataContext="{Binding TaskTypesListVM}"/>
-            <local:TasksListView  Grid.Column="2" DataContext="{Binding TasksListVM}"/>
-        </Grid>
-
-        <Border Grid.Row="4" Background="{DynamicResource MahApps.Brushes.Accent}">
-            <StackPanel Orientation="Horizontal">
-
-                <TextBlock Text="Version: " 
-                   FontSize="16"
-                   FontWeight="DemiBold" 
-                   Foreground="White" 
-                   VerticalAlignment="Center"
-                   Margin="5,0,5,0"/>
-
-                <TextBlock Text="{Binding Version}" 
-                   FontSize="16"
-                   FontWeight="DemiBold" 
-                   Foreground="White" 
-                   VerticalAlignment="Center"
-                   Margin="5,0,0,0"/>
-
-            </StackPanel>
-        </Border>
+        <script_handler:DesignView DataContext="{Binding Design}"/>
 
     </Grid>
 </mah:MetroWindow>

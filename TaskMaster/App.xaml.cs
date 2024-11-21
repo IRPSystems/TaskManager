@@ -16,7 +16,9 @@ namespace TaskMaster
 	{
 		public App()
 		{
-			
+			Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense(
+				 "MzM3MDg2M0AzMjM0MmUzMDJlMzBCT2dsKzBPUW9HbXFrM1J3aWxQR2k5UDVOZXNDdE4zdGJCSjI5N2lpWGlJPQ==");
+
 			this.DispatcherUnhandledException += App_DispatcherUnhandledException;
 
 
