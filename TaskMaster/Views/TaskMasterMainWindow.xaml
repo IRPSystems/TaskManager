@@ -10,7 +10,8 @@
                  xmlns:local="clr-namespace:TaskMaster.Views"
                  WindowStartupLocation="CenterScreen"
                  mc:Ignorable="d"
-                 Title="Release Tasks Master" Height="800" Width="900">
+                 Title="Release Tasks Master" Height="800" Width="900"
+                 WindowState="Maximized">
 
     <mah:MetroWindow.Resources>
         <ResourceDictionary>
