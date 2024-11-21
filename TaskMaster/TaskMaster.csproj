@@ -23,4 +23,9 @@
     <ProjectReference Include="..\ScriptsInfrastructure\ScriptHandler\ScriptHandler.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Converters\" />
+    <Folder Include="Resources\" />
+  </ItemGroup>
+
 </Project>
