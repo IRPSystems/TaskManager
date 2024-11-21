@@ -25,6 +25,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Communication", "Infrastruc
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FlashingToolLib", "FlashingToollib\FlashingToolLib\FlashingToolLib.csproj", "{635BE9AA-D6B0-4EE3-9184-67CF31D69FC4}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ScriptRunner", "ScriptsInfrastructure\ScriptRunner\ScriptRunner.csproj", "{E586220B-DB8F-499A-95CE-F7AA14ACF640}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -167,6 +169,18 @@ Global
 		{635BE9AA-D6B0-4EE3-9184-67CF31D69FC4}.Release|x64.Build.0 = Release|x64
 		{635BE9AA-D6B0-4EE3-9184-67CF31D69FC4}.Release|x86.ActiveCfg = Release|Any CPU
 		{635BE9AA-D6B0-4EE3-9184-67CF31D69FC4}.Release|x86.Build.0 = Release|Any CPU
+		{E586220B-DB8F-499A-95CE-F7AA14ACF640}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E586220B-DB8F-499A-95CE-F7AA14ACF640}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E586220B-DB8F-499A-95CE-F7AA14ACF640}.Debug|x64.ActiveCfg = Debug|x64
+		{E586220B-DB8F-499A-95CE-F7AA14ACF640}.Debug|x64.Build.0 = Debug|x64
+		{E586220B-DB8F-499A-95CE-F7AA14ACF640}.Debug|x86.ActiveCfg = Debug|x86
+		{E586220B-DB8F-499A-95CE-F7AA14ACF640}.Debug|x86.Build.0 = Debug|x86
+		{E586220B-DB8F-499A-95CE-F7AA14ACF640}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E586220B-DB8F-499A-95CE-F7AA14ACF640}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E586220B-DB8F-499A-95CE-F7AA14ACF640}.Release|x64.ActiveCfg = Release|x64
+		{E586220B-DB8F-499A-95CE-F7AA14ACF640}.Release|x64.Build.0 = Release|x64
+		{E586220B-DB8F-499A-95CE-F7AA14ACF640}.Release|x86.ActiveCfg = Release|x86
+		{E586220B-DB8F-499A-95CE-F7AA14ACF640}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

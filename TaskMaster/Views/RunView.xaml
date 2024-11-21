@@ -1,0 +1,79 @@
+﻿<UserControl x:Class="TaskMaster.Views.RunView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:script_runner_views="clr-namespace:ScriptRunner.Views;assembly=ScriptRunner"
+             xmlns:script_runner_converters="clr-namespace:ScriptRunner.Converter;assembly=ScriptRunner"
+             xmlns:script_handler_converters="clr-namespace:ScriptHandler.Converter;assembly=ScriptHandler"
+             xmlns:controls="clr-namespace:Controls.Views;assembly=Controls"
+             xmlns:local="clr-namespace:TaskMaster.Views"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="1000">
+
+    <UserControl.Resources>
+        <script_runner_converters:StepVisibilityConverter x:Key="StepVisibilityConverter" />
+        <script_handler_converters:ContentConverter x:Key="ContentConverter" />
+        <script_runner_converters:ErrorMessageVisibilityConverter x:Key="ErrorMessageVisibilityConverter" />
+    </UserControl.Resources>
+    
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="350"/>
+            <ColumnDefinition Width="10"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <script_runner_views:RunExplorerView DataContext="{Binding RunExplorer}" MaxWidth="350"/>
+
+        <Grid Grid.Column="2" IsEnabled="{Binding IsConnected}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="30"/>
+                <RowDefinition Height="5"/>
+                <RowDefinition Height="30"/>
+                <RowDefinition Height="5"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <controls:HeaderView Grid.Row="0" Title="{Binding RunScript.CurrentScript.CurrentScript.Name}" FontSize="20" HeaderBackground="{DynamicResource MahApps.Brushes.Accent2}"/>
+            <controls:HeaderView x:Name="step" Grid.Row="2" Title="{Binding RunScript.CurrentScript.CurrentStep.Description}" FontSize="16" HeaderBackground="{DynamicResource MahApps.Brushes.Accent2}"/>
+
+
+            <ContentControl Grid.Row="4" 
+                    ContentTemplate="{Binding RunScript.CurrentScript.CurrentStep.Template}"
+                    Visibility="{Binding ErrorMessage, Converter={StaticResource StepVisibilityConverter}}">
+
+                <ContentControl.Content>
+                    <MultiBinding Converter="{StaticResource ContentConverter}">
+                        <Binding Path="RunScript.CurrentScript.CurrentStep.Description" />
+                        <Binding Path="RunScript.CurrentScript.CurrentStep"/>
+                    </MultiBinding>
+                </ContentControl.Content>
+
+            </ContentControl>
+
+            <Grid Grid.Row="4" Background="Red"
+          Visibility="{Binding ErrorMessage, Converter={StaticResource ErrorMessageVisibilityConverter}}">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="5"/>
+                    <RowDefinition Height="50"/>
+                </Grid.RowDefinitions>
+
+                <TextBox Grid.Row="0" 
+                 Text="{Binding ErrorMessage}"
+                 FontSize="30"
+                 TextWrapping="Wrap"
+                 VerticalAlignment="Center"
+                 HorizontalAlignment="Center"
+                 ScrollViewer.VerticalScrollBarVisibility="Auto"
+                 Background="Transparent"
+                 Foreground="White"
+                 IsReadOnly="True"
+                 BorderThickness="0"/>
+            </Grid>
+
+        </Grid>
+
+    </Grid>
+</UserControl>
