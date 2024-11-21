@@ -59,7 +59,7 @@
 
         <Line Grid.Row="1" X1="1" Stretch="Fill" Stroke="{DynamicResource MahApps.Brushes.Accent2}" />
 
-        <script_handler:DesignView Grid.Row="2" DataContext="{Binding Design}"/>
+        <ContentControl Grid.Row="2" Content="{Binding Docking}" Margin="5"/>
 
         <Border Grid.Row="4" Background="{DynamicResource MahApps.Brushes.Accent}">
             <StackPanel Orientation="Horizontal">

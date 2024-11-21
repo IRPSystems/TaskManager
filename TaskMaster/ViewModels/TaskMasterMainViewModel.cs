@@ -20,6 +20,8 @@ namespace TaskMaster.ViewModels
 		public ReleaseTaskMasterUserData ReleaseTaskMasterUserData { get; set; }
 
 		public DesignViewModel Design { get; set; }
+		public DockingViewModel Docking { get; set; }
+
 
 		#endregion Properties
 
@@ -48,6 +50,8 @@ namespace TaskMaster.ViewModels
 			ChangeDarkLight();
 
 			Design = new DesignViewModel(null, null, ReleaseTaskMasterUserData.ScriptUserData, "ReleaseTasks", false);
+
+			Docking = new DockingViewModel(Design);
 		}
 
 		#endregion Constructor
